@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistem PUPR</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <!-- LOGO PUPR DI HALAMAN LOGIN -->
+                <img src="img/logo-pupr.png" alt="Logo PUPR" style="width: 70px; height: auto; margin-bottom: 15px;">
+                <h2>PUPR<span>.</span></h2>
+                <p>Sistem Informasi Audit Absensi</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="input-group-login">
+                    <label>Username</label>
+                    <input type="text" id="username" required placeholder="Masukkan username">
+                </div>
+                <div class="input-group-login">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="Masukkan password">
+                </div>
+                <button type="submit" class="btn-login">Masuk ke Dashboard</button>
+                <p id="error-msg" class="error-msg"></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            // Username & Password
+            if (user === 'admin' && pass === 'admin123') {
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'index.html';
+            } else {
+                errorMsg.innerText = "Username atau Password salah!";
+            }
+        });
+    </script>
+</body>
+</html>

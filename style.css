@@ -1,0 +1,720 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f0f4f8; 
+    color: #333;
+    height: 100vh;
+    overflow: hidden; 
+}
+
+/* --- LAYOUT UTAMA --- */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* --- SIDEBAR (Tema PUPR: Biru Gelap) --- */
+.sidebar {
+    width: 280px;
+    background-color: #0b2253;
+    border-radius: 24px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    
+    /* PERBAIKAN: Agar dropdown tidak terpotong */
+    overflow: visible !important; 
+}
+
+.logo h2 {
+    font-size: 24px;
+    font-weight: 700;
+}
+.logo h2 span { color: #facc15; }
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu a {
+    color: #a0aec0;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.menu a:hover, .menu a.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: 500;
+    border-left: 4px solid #facc15;
+}
+
+/* Form di Sidebar */
+.sidebar-bottom {
+    margin-top: auto; 
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 16px;
+
+    /* PERBAIKAN: Agar dropdown tidak terpotong */
+    overflow: visible !important; 
+}
+.sidebar-bottom h3 {
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #e2e8f0;
+}
+.sidebar-bottom input:not([type="hidden"]) {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 13px;
+}
+.sidebar-bottom input::placeholder { color: #a0aec0; }
+
+/* --- CUSTOM DROPDOWN STATUS (Sidebar) --- */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.custom-dropdown-btn {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.custom-dropdown-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #facc15;
+}
+
+.custom-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    padding: 8px;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    animation: fadeInDown 0.2s ease-out;
+    max-height: 200px; 
+    overflow-y: auto;  
+}
+
+.custom-dropdown-menu::-webkit-scrollbar { width: 6px; }
+.custom-dropdown-menu::-webkit-scrollbar-track { background: transparent; }
+.custom-dropdown-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.custom-dropdown-menu::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.custom-dropdown-menu.show {
+    display: flex;
+}
+
+.custom-dropdown-item {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #334155;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.custom-dropdown-item:hover {
+    background-color: #f1f5f9;
+    color: #0b2253;
+    font-weight: 600;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.sidebar-bottom button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: #facc15;
+    color: #0b2253;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.sidebar-bottom button:hover { background-color: #eab308; }
+
+/* --- KONTEN UTAMA --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; 
+    padding-right: 10px;
+}
+
+.main-content::-webkit-scrollbar { width: 8px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.top-header h1 { font-size: 22px; color: #1e293b; font-weight: 600; }
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 50px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.user-info { text-align: right; display: flex; flex-direction: column; }
+.user-info strong { font-size: 13px; color: #1e293b; }
+.user-info span { font-size: 11px; color: #64748b; }
+.avatar {
+    width: 40px; height: 40px;
+    background: #e2e8f0;
+    color: #0b2253;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: bold; font-size: 14px;
+}
+
+/* --- GRID KARTU --- */
+.content-area {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.top-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.card-header h3 { font-size: 16px; color: #1e293b; font-weight: 600; }
+
+/* --- GRID UNTUK 4 KARTU STATISTIK --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.stat-item span { font-size: 13px; color: #64748b; }
+.stat-item h2 { font-size: 32px; margin-top: 5px; }
+
+.btn-primary {
+    background-color: #0b2253; 
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+}
+.btn-primary:hover { background-color: #1e3a8a; }
+
+.chart-wrapper {
+    position: relative;
+    height: 180px; 
+    width: 100%;
+}
+
+/* --- TABEL --- */
+.table-card {
+    padding: 25px;
+}
+.table-responsive {
+    overflow-x: auto;
+    max-height: 400px; 
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 2000px;
+}
+
+thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky; 
+    top: 0;
+    z-index: 10;
+}
+
+thead tr:nth-child(1) th { text-align: center; border-bottom: none; }
+thead tr:nth-child(2) th { text-align: center; font-size: 11px; }
+
+tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+tbody tr:hover { background-color: #f8fafc; }
+
+.btn-hapus {
+    background-color: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-hapus:hover { background-color: #fecaca; }
+
+/* --- CUSTOM DROPDOWN DI DALAM TABEL --- */
+.table-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.table-dropdown-btn {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+    background-color: transparent;
+}
+
+.table-dropdown-btn:hover, .table-dropdown-btn:focus {
+    border-color: #cbd5e1;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.table-dropdown-btn svg {
+    color: #94a3b8;
+}
+
+.table-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    width: max-content; 
+    min-width: 100%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 6px;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    animation: fadeInDown 0.15s ease-out;
+    border: 1px solid #f1f5f9;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.table-dropdown-menu::-webkit-scrollbar { width: 6px; }
+.table-dropdown-menu::-webkit-scrollbar-track { background: transparent; }
+.table-dropdown-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+.table-dropdown-menu.show {
+    display: flex;
+}
+
+.table-dropdown-item {
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #334155;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.table-dropdown-item:hover {
+    background-color: #f1f5f9;
+    color: #0b2253;
+    font-weight: 600;
+}
+
+/* --- STYLING HALAMAN LOGIN --- */
+.login-body {
+    background-color: #0b2253; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.login-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2 {
+    font-size: 28px;
+    color: #0b2253;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+
+.login-header h2 span { color: #facc15; }
+
+.login-header p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+}
+
+.input-group-login {
+    margin-bottom: 20px;
+}
+
+.input-group-login label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.input-group-login input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.input-group-login input:focus {
+    border-color: #0b2253;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(11, 34, 83, 0.1);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #0b2253;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    background-color: #1e3a8a;
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: 500;
+}
+
+/* --- STYLING KALENDER & AGENDA --- */
+.calendar-agenda-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px;
+    flex: 1;
+}
+
+.calendar-wrapper {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+}
+
+.calendar-grid div {
+    font-size: 12px;
+    padding: 5px 0;
+    border-radius: 6px;
+    color: #334155;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.calendar-grid div:hover:not(.empty) {
+    background-color: #e2e8f0;
+    cursor: pointer;
+}
+
+.calendar-grid div.today {
+    background-color: #0b2253; 
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(11, 34, 83, 0.3);
+}
+
+.calendar-grid div.empty {
+    color: transparent;
+}
+
+/* --- STYLING AGENDA --- */
+.agenda-wrapper {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.agenda-wrapper h4 {
+    font-size: 13px;
+    color: #1e293b;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 5px;
+}
+
+.agenda-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 120px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.agenda-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #334155;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.agenda-item span {
+    cursor: pointer;
+    flex: 1;
+}
+.agenda-item span.selesai {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
+
+.btn-hapus-agenda {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 5px;
+}
+
+.agenda-input-group {
+    display: flex;
+    gap: 5px;
+}
+
+.agenda-input-group input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 12px;
+    outline: none;
+}
+
+.agenda-input-group button {
+    background-color: #0b2253;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.agenda-input-group button:hover {
+    background-color: #1e3a8a;
+}
+
+/* --- TOMBOL DOWNLOAD GRAFIK MODERN --- */
+.btn-download {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #f8fafc;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-download:hover {
+    background-color: #e2e8f0;
+    color: #0b2253;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* --- DROPDOWN CUSTOM (Filter UPT) --- */
+.custom-select {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-select select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    padding: 8px 32px 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.custom-select select:hover, .custom-select select:focus {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Mempercantik Opsi di dalam Filter UPT */
+.custom-select select option {
+    background-color: white;
+    color: #334155;
+    padding: 10px;
+}
+
+.custom-select select option:hover, 
+.custom-select select option:focus, 
+.custom-select select option:checked {
+    background-color: #f1f5f9;
+    color: #0b2253;
+    font-weight: 600;
+}
+
+.custom-select .icon-chevron {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; 
+    color: #64748b;
+}

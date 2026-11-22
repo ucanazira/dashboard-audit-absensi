@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Audit Absensi PUPR</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- PROTEKSI HALAMAN -->
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <div class="dashboard-container">
+        
+        <!-- SIDEBAR KIRI -->
+        <aside class="sidebar">
+            <div class="logo" style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
+                <!-- Pastikan file logo ada di folder img/logo-pupr.png -->
+                <img src="img/logo-pupr.png" alt="Logo PUPR" style="width: 40px; height: auto;">
+                <h2 style="font-size: 20px; margin: 0;">PUPR<span>.</span></h2>
+            </div>
+            
+            <nav class="menu">
+                <a href="#" class="active">Dashboard Audit</a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <h3>Tambah Pegawai</h3>
+                <form id="form-pegawai">
+                    <input type="text" id="nama" required placeholder="Nama Lengkap">
+                    <input type="text" id="jabatan" required placeholder="Jabatan">
+                    <input type="text" id="upt" required placeholder="UPT" value="">
+                    
+                    <!-- CUSTOM DROPDOWN STATUS KEPEGAWAIAN -->
+                    <div class="input-status-group" style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 12px; color: #a0aec0; margin-bottom: 5px;">Status Kepegawaian</label>
+                        
+                        <div class="custom-dropdown" id="dropdown-status">
+                            <div class="custom-dropdown-btn" onclick="toggleDropdownStatus()">
+                                <span id="label-status-terpilih">AKTIF</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                            <div class="custom-dropdown-menu">
+                                <div class="custom-dropdown-item" onclick="pilihStatus('AKTIF')">AKTIF</div>
+                                <div class="custom-dropdown-item" onclick="pilihStatus('CUTI')">CUTI</div>
+                                <div class="custom-dropdown-item" onclick="pilihStatus('RESIGN')">TIDAK BEKERJA LAGI</div>
+                            </div>
+                        </div>
+                        <!-- Input hidden untuk menyimpan nilai asli agar JS tidak error -->
+                        <input type="hidden" id="status-pegawai" value="AKTIF" required>
+                    </div>
+
+                    <button type="submit" id="btn-submit">Tambah Data</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- KONTEN UTAMA KANAN -->
+        <main class="main-content">
+            <header class="top-header">
+                <h1>Laporan Audit Absensi Pegawai</h1>
+                <div class="user-profile" style="gap: 20px;">
+                    <div class="user-info">
+                        <strong>Admin PUPR</strong>
+                        <span>Auditor</span>
+                    </div>
+                    <div class="avatar">AP</div>
+                    <button onclick="logout()" style="background:none; border:none; color:#ef4444; font-weight:bold; cursor:pointer; font-size: 13px;">Logout</button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <!-- KARTU RINGKASAN (4 STATISTIK) -->
+                <div class="card summary-card" style="margin-bottom: 20px;">
+                    <div class="card-header">
+                        <h3>Ringkasan Kepegawaian</h3>
+                        
+                        <!-- CUSTOM DROPDOWN FILTER UPT (BARU) -->
+                        <div class="filter-group">
+                            <div class="custom-dropdown" id="dropdown-upt" style="margin-bottom: 0; width: 140px;">
+                                <div class="custom-dropdown-btn" onclick="toggleDropdownUPT()" style="border-color: #e2e8f0; background-color: white; color: #334155; padding: 8px 12px;">
+                                    <span id="label-upt-terpilih" style="font-size: 13px; font-weight: 500;">SEMUA UPT</span>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                </div>
+                                <div class="custom-dropdown-menu" id="menu-upt">
+                                    <!-- Opsi akan diisi oleh JavaScript -->
+                                </div>
+                            </div>
+                            <!-- Input hidden untuk menyimpan nilai filter -->
+                            <input type="hidden" id="filter-upt" value="SEMUA">
+                        </div>
+
+                    </div>
+                    
+                    <!-- Grid 4 kolom -->
+                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+                        <div class="stat-item">
+                            <span>Total Pegawai</span>
+                            <h2 id="total-pegawai" style="color: #0b2253;">0</h2>
+                        </div>
+                        <div class="stat-item">
+                            <span>Total UPT</span>
+                            <h2 id="total-upt" style="color: #0b2253;">0</h2>
+                        </div>
+                        <div class="stat-item">
+                            <span>Pegawai Cuti</span>
+                            <h2 id="total-cuti" style="color: #eab308;">0</h2>
+                        </div>
+                        <div class="stat-item">
+                            <span>Tidak Bekerja Lagi</span>
+                            <h2 id="total-resign" style="color: #ef4444;">0</h2>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="exportToExcel()" class="btn-primary" style="flex: 1;">Export Laporan ke Excel</button>
+                    </div>
+                </div>
+
+                <!-- BARIS GRAFIK & KALENDER+AGENDA -->
+                <div class="top-row">
+                    <!-- Grafik -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Statistik Kepegawaian per UPT</h3>
+                            
+                            <!-- TOMBOL UNDUH GRAFIK MODERN (IKON SVG) -->
+                            <button onclick="downloadGrafik()" class="btn-download">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Unduh Grafik
+                            </button>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="grafikUPT"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- KARTU KALENDER & AGENDA -->
+                    <div class="card calendar-card" style="display: flex; flex-direction: column;">
+                        <div class="card-header" style="margin-bottom: 10px;">
+                            <h3 id="judul-bulan-tahun" style="font-size: 16px;">Bulan Tahun</h3>
+                        </div>
+                        
+                        <div class="calendar-agenda-container">
+                            <!-- Sisi Kiri: Kalender -->
+                            <div class="calendar-wrapper">
+                                <div class="calendar-header">
+                                    <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span>
+                                </div>
+                                <div class="calendar-grid" id="calendar-days">
+                                    <!-- Tanggal diisi JS -->
+                                </div>
+                            </div>
+
+                            <!-- Sisi Kanan: Agenda -->
+                            <div class="agenda-wrapper">
+                                <h4>Agenda Hari Ini</h4>
+                                <div class="agenda-list" id="agenda-list">
+                                    <!-- Daftar agenda diisi JS -->
+                                </div>
+                                <div class="agenda-input-group">
+                                    <input type="text" id="input-agenda" placeholder="Tambah agenda...">
+                                    <button onclick="tambahAgenda()">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KARTU TABEL -->
+                <div class="card table-card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3>Data Laporan Bulanan Pegawai</h3>
+                        <p style="font-size: 12px; color: #64748b;">Tips: Gunakan tombol <strong>Tab</strong> atau <strong>Enter</strong> untuk berpindah kolom dengan cepat.</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tabel-pegawai">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">No</th>
+                                    <th rowspan="2">NAMA</th>
+                                    <th rowspan="2">JABATAN</th>
+                                    <th rowspan="2">UPT</th>
+                                    <th rowspan="2">STATUS<br>KEPEGAWAIAN</th>
+                                    <th colspan="12">STATUS AUDIT</th>
+                                    <th rowspan="2">Aksi</th>
+                                </tr>
+                                <tr>
+                                    <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th>
+                                    <th>Mei</th><th>Jun</th><th>Jul</th><th>Agt</th>
+                                    <th>Sep</th><th>Okt</th><th>Nov</th><th>Des</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data diisi otomatis oleh script.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
